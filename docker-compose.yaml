@@ -1,0 +1,31 @@
+version: "2.2"
+services:
+  AwsXRayTracing:
+    image: amazon/aws-otel-collector:v0.26.2
+    command: ["--config=/etc/otel-agent-config.yaml"]
+    environment:
+      - AWS_REGION=ap-south-1
+      - AWS_ACCESS_KEY_ID=AKIA4L5TQ3CWWFANXBM7
+      - AWS_SECRET_ACCESS_KEY=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
+    volumes:
+      - ./otel-agent-config.yaml:/etc/otel-agent-config.yaml
+      - ~/.aws:/root/.aws
+    hostname: "localhost:127.0.0.1"
+    extra_hosts:
+      - "localhost:127.0.0.1"
+    ports:
+      - "4317:4317" # OTLP receiver
+      - "13133:13133" # health_check
+
+
+#  ot-metric-emitter:
+#    image: sha256:1f323c33eef212a2a83fc52b9517ee1180c85f75170b63a1c6c88cd6efb39fce
+#    environment:
+#      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://127.0.0.1:4318/v1/traces"
+#      - OTEL_RESOURCE_ATTRIBUTES=service.namespace=AOCDockerDemo,service.name=AOCDockerDemoService
+#      - S3_REGION=ap-south-1
+#      - OTEL_METRICS_EXPORTER=otlp
+#      - OTEL_TRACES_EXPORTER=otlp
+#    depends_on:
+#      - AwsXRayTracing
+#    network_mode: bridge

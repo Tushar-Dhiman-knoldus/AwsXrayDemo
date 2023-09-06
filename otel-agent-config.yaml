@@ -1,0 +1,39 @@
+extensions:
+  health_check:
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+
+processors:
+  batch/traces:
+    timeout: 1s
+    send_batch_size: 50
+  batch/metrics:
+    timeout: 60s
+
+exporters:
+  logging:
+    loglevel: debug
+  awsxray:
+    region: 'ap-south-1'
+  awsemf:
+    region: 'ap-south-1'
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [awsxray]
+    metrics:
+      receivers: [otlp]
+      exporters: [awsemf]
+
+  extensions: [pprof]
+  telemetry:
+    logs:
+      level: debug
